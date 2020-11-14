@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">MyAnimeList</string>
+    <string name="login_hint">Username…</string>
+    <string name="password_hint">Password..</string>
+    <string name="btn_SubmitLogin">Login</string>
+    <string name="logo_contentDesc">Logo for app</string>
+    <string name="btn_UseDemoAccount">Use Demo Account</string>
+    <string-array name="mainMenu_ListItems">
+        <item>Search Anime</item>
+        <item>Plan To Watch</item>
+        <item>Watching</item>
+        <item>Completed</item>
+    </string-array>
+</resources>
