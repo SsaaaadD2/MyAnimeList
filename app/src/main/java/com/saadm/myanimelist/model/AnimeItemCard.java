@@ -1,14 +1,15 @@
 package com.saadm.myanimelist.model;
 
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 
 public class AnimeItemCard {
     private String mTitle;
     private String mDescription;
     private String mGenres;
-    private Image mImage;
+    private Drawable mImage;
 
-    public AnimeItemCard(String title, String description, String genres, Image image){
+    public AnimeItemCard(String title, String description, String genres, Drawable image){
         mTitle = title;
         mDescription = description;
         mGenres = genres;
@@ -39,11 +40,11 @@ public class AnimeItemCard {
         mGenres = genres;
     }
 
-    public Image getImage() {
+    public Drawable getImage() {
         return mImage;
     }
 
-    public void setImage(Image image) {
+    public void setImage(Drawable image) {
         mImage = image;
     }
 }

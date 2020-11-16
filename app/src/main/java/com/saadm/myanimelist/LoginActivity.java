@@ -1,12 +1,14 @@
 package com.saadm.myanimelist;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
 
     Button mLogin;
     Button mDemoAccount;
+    ProgressBar mProgressBar;
     String mRedirectUri = "myapp://auth";
     String mBaseURL = "https://myanimelist.net/v1/oauth2/";
     String mClientId = "1c332a538ae8d87c3594a1cd0c705426";
@@ -43,6 +46,8 @@ public class LoginActivity extends AppCompatActivity {
 
         mLogin = findViewById(R.id.button_Login);
         mDemoAccount = findViewById(R.id.button_DemoAccount);
+        mProgressBar = findViewById(R.id.progressBar);
+        mProgressBar.setVisibility(View.INVISIBLE);
 
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +69,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onResume();
 
         Uri uri = getIntent().getData();
+
+        //Make sure that the app was resumed after catching the redirect URL
         if(uri != null && uri.toString().startsWith(mRedirectUri)){
             String code = uri.getQueryParameter("code");
             Retrofit.Builder builder = new Retrofit.Builder()
@@ -72,21 +79,33 @@ public class LoginActivity extends AppCompatActivity {
 
             Retrofit retrofit = builder.build();
             MALClient client = retrofit.create(MALClient.class);
-            Log.i("Token" , "Verifier2 " + mVerifier);
+
+            //Async tasl therefore we need Call
             Call<AccessToken> accessToken= client.getAccessToken(
                     mClientId,
                     code,
                     mVerifier,
                     "authorization_code"
             );
+            mProgressBar.setVisibility(View.VISIBLE);
+
+            //Begin the async task
             accessToken.enqueue(new Callback<AccessToken>() {
                 @Override
                 public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-                    Toast.makeText(LoginActivity.this, "Succesfully authenticated", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Successfully authenticated", Toast.LENGTH_SHORT).show();
                     AccessToken token = response.body();
-                    Log.i("Token", "Token: " + token.getAccessToken());
-                    Log.i("Token", "Expires in: " + token.getExpiresIn());
+                    String accessToken = token.getAccessToken();
+                    SharedPreferences.Editor sharedPrefs = getSharedPreferences(getString(R.string.PREFS_KEY)
+                            , MODE_PRIVATE)
+                            .edit();
+                    sharedPrefs.putString("access_token", token.getAccessToken());
+                    sharedPrefs.apply();
+
+//                    Log.i("Token", "Token: " + token.getAccessToken());
+//                    Log.i("Token", "Expires in: " + token.getExpiresIn());
                     Intent intent = new Intent(LoginActivity.this, MainMenuActivity.class);
+                    intent.putExtra("accessToken", accessToken);
                     startActivity(intent);
                 }
 
@@ -114,6 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         SecureRandom sr = new SecureRandom();
         byte[] code = new byte[64];
         sr.nextBytes(code);
-        mVerifier = Base64.encodeToString(code, (Base64.URL_SAFE | Base64.NO_PADDING));
+        String verify = Base64.encodeToString(code, (Base64.URL_SAFE | Base64.NO_PADDING));
+        mVerifier = verify.trim().replaceAll("\n", "");
     }
 }

@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".PlanToWatchActivity"></activity>
         <activity android:name=".MainMenuActivity" />
         <activity
             android:name=".LoginActivity"
@@ -22,9 +23,13 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="auth" android:scheme="myapp" />
+
+                <data
+                    android:host="auth"
+                    android:scheme="myapp" />
             </intent-filter>
         </activity>
     </application>

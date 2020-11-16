@@ -2,7 +2,7 @@
     <string name="app_name">MyAnimeList</string>
     <string name="login_hint">Username…</string>
     <string name="password_hint">Password..</string>
-    <string name="btn_SubmitLogin">Login</string>
+    <string name="btn_SubmitLogin">Login With OAuth</string>
     <string name="logo_contentDesc">Logo for app</string>
     <string name="btn_UseDemoAccount">Use Demo Account</string>
     <string-array name="mainMenu_ListItems">
@@ -11,4 +11,5 @@
         <item>Watching</item>
         <item>Completed</item>
     </string-array>
+    <string name="PREFS_KEY">com.saadm.MyAnimeList</string>
 </resources>

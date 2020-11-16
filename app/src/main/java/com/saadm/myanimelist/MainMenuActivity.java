@@ -5,13 +5,17 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.saadm.myanimelist.service.adapters.RecyclerAdapter;
 
 import java.util.ArrayList;
 
-public class MainMenuActivity extends AppCompatActivity {
+public class MainMenuActivity extends AppCompatActivity implements RecyclerAdapter.onStringClickListener {
 
     RecyclerView mRecyView;
     @Override
@@ -29,9 +33,28 @@ public class MainMenuActivity extends AppCompatActivity {
             listItems.add(item);
         }
 
-        RecyclerAdapter recyAdapter = new RecyclerAdapter(this, listItems);
+
+
+        RecyclerAdapter recyAdapter = new RecyclerAdapter(this, listItems, this);
         mRecyView.setAdapter(recyAdapter);
         mRecyView.setLayoutManager(new LinearLayoutManager(this));
         mRecyView.addItemDecoration(new DividerItemDecoration(mRecyView.getContext(), DividerItemDecoration.VERTICAL));
+    }
+
+
+    @Override
+    public void onItemClick(String item) {
+    Intent intent;
+    switch(item){
+        default:
+        case "Plan To Watch":
+            intent = new Intent(MainMenuActivity.this, PlanToWatchActivity.class);
+            break;
+        case "Watching":
+            return;
+        case "Completed":
+            return;
+    }
+        startActivity(intent);
     }
 }

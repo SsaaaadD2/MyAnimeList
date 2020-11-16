@@ -25,42 +25,13 @@
             android:contentDescription="@string/logo_contentDesc"
             app:srcCompat="@drawable/mal_logo" />
 
-        <EditText
-            android:id="@+id/edt_LoginName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="@string/login_hint"
-            android:inputType="textPersonName"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#75FFFFFF" />
-
-        <EditText
-            android:id="@+id/edt_Password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="@string/password_hint"
-            android:inputType="textPassword"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#75FFFFFF" />
-
         <Button
             android:id="@+id/button_Login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/background_light"
+            android:padding="10dp"
             android:text="@string/btn_SubmitLogin"
             android:textColor="#2E51A2" />
 
@@ -72,5 +43,14 @@
             android:background="@android:color/transparent"
             android:text="@string/btn_UseDemoAccount"
             android:textColor="@android:color/background_light" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

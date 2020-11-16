@@ -1,6 +1,7 @@
 package com.saadm.myanimelist.service.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,27 +20,39 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     ArrayList<String> mListItems;
     ArrayList<AnimeItemCard> mAnimeItems;
     Context mContext;
+    onStringClickListener mStringListener;
+    onCardClickListener mCardListener;
 
-    public RecyclerAdapter(Context ct, ArrayList<String> listNames){
+    public interface onStringClickListener{
+        void onItemClick(String item);
+    }
+
+    public interface onCardClickListener{
+        void onItemClick(AnimeItemCard card);
+    }
+
+    public RecyclerAdapter(Context ct, ArrayList<String> listNames, onStringClickListener itemListener){
         mContext = ct;
         mListItems = listNames;
+        mStringListener = itemListener;
     }
 
     //The type string is just to differentiate the signature from the constructor above
-    public RecyclerAdapter(Context ct,ArrayList<AnimeItemCard> animeItems, String type){
+    public RecyclerAdapter(Context ct,ArrayList<AnimeItemCard> animeItems, onCardClickListener itemListener){
         mContext = ct;
         mAnimeItems = animeItems;
+
+        mCardListener = itemListener;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(mAnimeItems.isEmpty() && !mListItems.isEmpty()){
+        if(mAnimeItems == null && mListItems!= null){
             return 0;
         }
-        else if(mListItems.isEmpty() && ! mAnimeItems.isEmpty()){
+        else{
             return 1;
         }
-        return 0;
     }
 
     @NonNull
@@ -50,16 +63,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             default:
             case 0:
                 View view = inflater.inflate(R.layout.mainmenu_row, parent, false);
-                return new ViewHolder(view, 0);
+                return new ViewHolder(view, 0, mStringListener);
             case 1:
                 view = inflater.inflate(R.layout.animeitem_card, parent, false);
-                return new ViewHolder(view, 1);
+                return new ViewHolder(view, 1, mCardListener);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.mItemText.setText(mListItems.get(position));
+        int state = getItemViewType(position);
+        if(state == 0){
+            holder.mItemText.setText(mListItems.get(position));
+        }
+
     }
 
     @Override
@@ -68,7 +85,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder{
 
         //For main menu
         TextView mItemText;
@@ -79,21 +96,45 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         ImageView mImg;
         TextView mAnimeGenres;
 
-        public ViewHolder(@NonNull View itemView, int viewType) {
+        onStringClickListener mStringListener;
+        onCardClickListener mCardListener;
+
+        public ViewHolder(@NonNull View itemView, int viewType, onStringClickListener myClickListener) {
             super(itemView);
-            if (viewType == 0) {
-                mItemText = itemView.findViewById(R.id.txt_MainMenuListItem);
-            } else {
-                mAnimeTitle = itemView.findViewById(R.id.txt_Title);
-                mAnimeDescription = itemView.findViewById(R.id.txt_Description);
-                mAnimeGenres = itemView.findViewById(R.id.txt_Genres);
-                mImg = itemView.findViewById(R.id.img_AnimeImage);
-            }
+            mItemText = itemView.findViewById(R.id.txt_MainMenuListItem);
+            mStringListener = myClickListener;
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i("Click", "Value of mStringListener " + (mStringListener != null));
+                    mStringListener.onItemClick(mItemText.getText().toString());
+                }
+            });
         }
 
-        @Override
-        public void onClick(View v) {
-
+        public ViewHolder(@NonNull View itemView, int viewType, onCardClickListener myClickListener) {
+            super(itemView);
+            mAnimeTitle = itemView.findViewById(R.id.txt_Title);
+            mAnimeDescription = itemView.findViewById(R.id.txt_Description);
+            mAnimeGenres = itemView.findViewById(R.id.txt_Genres);
+            mImg = itemView.findViewById(R.id.img_AnimeImage);
+            mCardListener = myClickListener;
+            //itemView.setOnClickListener(this);
         }
+
+
+//        @Override
+//        public void onClick(View v) {
+//            if(mStringListener != null){
+//
+//            } else{
+//                AnimeItemCard itemCard = new AnimeItemCard(
+//                        mAnimeTitle.getText().toString(),
+//                        mAnimeDescription.getText().toString(),
+//                        mAnimeGenres.getText().toString(),
+//                        mImg.getDrawable());
+//                mCardListener.onItemClick(itemCard);
+//            }
+//        }
     }
 }
