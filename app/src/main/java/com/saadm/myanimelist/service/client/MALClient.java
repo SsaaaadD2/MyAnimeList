@@ -7,8 +7,10 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface MALClient {
 
@@ -22,6 +24,13 @@ public interface MALClient {
             @Field("grant_type") String grantType
     );
 
+
     @GET("users/@me/animelist")
-    Call<Data> getAnimeListData();
+    Call<Data> getAnimeListData(
+            @Header("Authorization") String token,
+            @Query("status") String status,
+            @Query("sort") String sort,
+            @Query("limit") int limit,
+            @Query("offset") int offset
+    );
 }

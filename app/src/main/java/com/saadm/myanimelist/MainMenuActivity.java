@@ -1,12 +1,15 @@
 package com.saadm.myanimelist;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,7 +36,7 @@ public class MainMenuActivity extends AppCompatActivity implements RecyclerAdapt
         mImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                logout();
+                showPopup();
             }
         });
 
@@ -50,6 +53,30 @@ public class MainMenuActivity extends AppCompatActivity implements RecyclerAdapt
         mRecyView.setAdapter(recyAdapter);
         mRecyView.setLayoutManager(new LinearLayoutManager(this));
         mRecyView.addItemDecoration(new DividerItemDecoration(mRecyView.getContext(), DividerItemDecoration.VERTICAL));
+    }
+
+    //Confirmation dialog to logout
+    private void showPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainMenuActivity.this);
+        builder.setMessage("Are you sure?")
+                .setPositiveButton("Logout", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        logout();
+                    }
+                })
+                .setNegativeButton("Cancel", null);
+        AlertDialog confirm = builder.create();
+
+        //Set colour of the buttons
+        confirm.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                confirm.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.parseColor("#2E51A2"));
+                confirm.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.parseColor("#2E51A2"));
+            }
+        });
+        confirm.show();
     }
 
     private void logout() {
