@@ -40,6 +40,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //If a user already has an access token and is authenticated, pass straight to the next screen
+        checkIfToken();
+
         if(mVerifier == null){
             generateCodeVerifier();
         }
@@ -64,6 +67,23 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+
+    //Token needs to exist and must not have expired yet
+    private void checkIfToken() {
+        SharedPreferences prefs = this.getSharedPreferences(getString(R.string.PREFS_KEY), MODE_PRIVATE);
+        long currentTime = System.currentTimeMillis() / 1000;
+        long expireTime = prefs.getLong("expiredTime", 0);
+        String accessToken = prefs.getString("accessToken", null);
+        Log.i("Token", "Checking Token");
+        Log.i("Token", "Access Token " + accessToken);
+        Log.i("Token", "Current Time " + currentTime + ", Expire time " + expireTime);
+        if(currentTime <= expireTime && accessToken != null){
+            Log.i("Token", "Start Activity");
+            Intent intent = new Intent(this, MainMenuActivity.class);
+            startActivity(intent);
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -80,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
             Retrofit retrofit = builder.build();
             MALClient client = retrofit.create(MALClient.class);
 
-            //Async tasl therefore we need Call
+            //Async task therefore we need Call
             Call<AccessToken> accessToken= client.getAccessToken(
                     mClientId,
                     code,
@@ -93,26 +113,34 @@ public class LoginActivity extends AppCompatActivity {
             accessToken.enqueue(new Callback<AccessToken>() {
                 @Override
                 public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-                    Toast.makeText(LoginActivity.this, "Successfully authenticated", Toast.LENGTH_SHORT).show();
-                    AccessToken token = response.body();
-                    String accessToken = token.getAccessToken();
-                    SharedPreferences.Editor sharedPrefs = getSharedPreferences(getString(R.string.PREFS_KEY)
-                            , MODE_PRIVATE)
-                            .edit();
-                    sharedPrefs.putString("access_token", token.getAccessToken());
-                    sharedPrefs.apply();
+                    try {
+                        Toast.makeText(LoginActivity.this, "Successfully authenticated", Toast.LENGTH_SHORT).show();
+                        AccessToken token = response.body();
+                        String accessToken = token.getAccessToken();
+                        SharedPreferences.Editor sharedPrefs = getSharedPreferences(getString(R.string.PREFS_KEY)
+                                , MODE_PRIVATE)
+                                .edit();
+                        sharedPrefs.putString("accessToken", token.getAccessToken());
+                        long time = System.currentTimeMillis() / 1000;
+                        long timeToExpire = (time) + token.getExpiresIn();
+                        Log.i("Token", "Time " + time + ", Expires " + timeToExpire);
+                        sharedPrefs.putLong("expiredTime", timeToExpire);
+                        sharedPrefs.apply();
 
 //                    Log.i("Token", "Token: " + token.getAccessToken());
 //                    Log.i("Token", "Expires in: " + token.getExpiresIn());
-                    Intent intent = new Intent(LoginActivity.this, MainMenuActivity.class);
-                    intent.putExtra("accessToken", accessToken);
-                    startActivity(intent);
+                        Intent intent = new Intent(LoginActivity.this, MainMenuActivity.class);
+                        intent.putExtra("accessToken", accessToken);
+                        startActivity(intent);
+                    } catch(Exception e){
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<AccessToken> call, Throwable t) {
                     Log.i("Token", "Failed to make request ");
-                    Toast.makeText(LoginActivity.this, "Did not get token", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Could not authenticate", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -122,7 +150,6 @@ public class LoginActivity extends AppCompatActivity {
     private void authenticate() {
         String url = mBaseURL + "authorize";
 
-        Log.i("Token" , "Verifier1 " + mVerifier);
         Uri authUri = Uri.parse(url + "?response_type=code&client_id=" + mClientId +
                 "&code_challenge=" + mVerifier + "&state=RequestID4");
         Intent intent = new Intent(Intent.ACTION_VIEW, authUri);
