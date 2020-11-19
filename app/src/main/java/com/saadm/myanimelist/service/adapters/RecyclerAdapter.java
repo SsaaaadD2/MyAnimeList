@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.saadm.myanimelist.R;
 import com.saadm.myanimelist.model.AnimeItemCard;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -75,13 +76,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         int state = getItemViewType(position);
         if(state == 0){
             holder.mItemText.setText(mListItems.get(position));
+        } else{
+            holder.mAnimeTitle.setText(mAnimeItems.get(position).getTitle());
+            holder.mAnimeGenres.setText(mAnimeItems.get(position).getGenres());
+            Picasso.get().load(mAnimeItems.get(position).getImageUrl()).into(holder.mImg);
         }
 
     }
 
     @Override
     public int getItemCount() {
-        return mListItems.size();
+        return (mListItems != null ? mListItems.size() : mAnimeItems.size());
     }
 
 

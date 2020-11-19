@@ -1,6 +1,6 @@
 package com.saadm.myanimelist.model;
 
-class Genres {
+public class Genres {
     private String name;
 
     public String getName() {

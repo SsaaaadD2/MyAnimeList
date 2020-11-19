@@ -11,10 +11,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.saadm.myanimelist.service.adapters.RecyclerAdapter;
 
@@ -91,17 +89,12 @@ public class MainMenuActivity extends AppCompatActivity implements RecyclerAdapt
 
     @Override
     public void onItemClick(String item) {
-    Intent intent;
-    switch(item){
-        default:
-        case "Plan To Watch":
-            intent = new Intent(MainMenuActivity.this, PlanToWatchActivity.class);
-            break;
-        case "Watching":
+        if(item.equals("Search Anime")){
             return;
-        case "Completed":
-            return;
-    }
-        startActivity(intent);
+        } else{
+            Intent intent= new Intent(MainMenuActivity.this, AnimeListActivity.class);
+            intent.putExtra("listStatus", item.toLowerCase().replace(" ", "_"));
+            startActivity(intent);
+        }
     }
 }

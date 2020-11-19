@@ -1,6 +1,6 @@
 package com.saadm.myanimelist.model;
 
-class AnimePicture {
+public class AnimePicture {
     public String getMedium() {
         return medium;
     }

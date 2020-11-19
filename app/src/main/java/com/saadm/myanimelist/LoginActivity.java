@@ -81,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
             Log.i("Token", "Start Activity");
             Intent intent = new Intent(this, MainMenuActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 
@@ -132,6 +133,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intent = new Intent(LoginActivity.this, MainMenuActivity.class);
                         intent.putExtra("accessToken", accessToken);
                         startActivity(intent);
+                        finish();
                     } catch(Exception e){
                         e.printStackTrace();
                     }
@@ -154,6 +156,7 @@ public class LoginActivity extends AppCompatActivity {
                 "&code_challenge=" + mVerifier + "&state=RequestID4");
         Intent intent = new Intent(Intent.ACTION_VIEW, authUri);
         startActivity(intent);
+        finish();
     }
 
     private void generateCodeVerifier(){
