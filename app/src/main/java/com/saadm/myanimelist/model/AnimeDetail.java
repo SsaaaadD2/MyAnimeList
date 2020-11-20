@@ -10,6 +10,11 @@ public class AnimeDetail {
     @SerializedName("main_picture")
     AnimePicture mainPicture;
 
+    @SerializedName("my_list_status")
+    ListStatus myListStatus;
+
+
+
     String synopsis;
     List<Genres> genres;
 
@@ -27,5 +32,9 @@ public class AnimeDetail {
 
     public List<Genres> getGenres() {
         return genres;
+    }
+
+    public ListStatus getMyListStatus() {
+        return myListStatus;
     }
 }

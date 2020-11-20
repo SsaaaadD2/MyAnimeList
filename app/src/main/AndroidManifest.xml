@@ -6,12 +6,12 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/mal_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/mal_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AnimeDetailsActivity"></activity>
+        <activity android:name=".AnimeDetailsActivity" android:screenOrientation="portrait"/>
         <activity android:name=".SearchAnimeActivity" />
         <activity android:name=".AnimeListActivity" />
         <activity android:name=".MainMenuActivity" />

@@ -10,6 +10,14 @@
         <item>Plan To Watch</item>
         <item>Watching</item>
         <item>Completed</item>
+        <item>Next Anime</item>
     </string-array>
     <string name="PREFS_KEY">com.saadm.MyAnimeList</string>
+    <string name="spinner_prompt">Watchlist</string>
+    <string-array name="watchlist_spinner">
+        <item>Add to List</item>
+        <item>Plan To Watch</item>
+        <item>Watching</item>
+        <item>Completed</item>
+    </string-array>
 </resources>

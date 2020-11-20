@@ -15,8 +15,12 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.saadm.myanimelist.service.adapters.RecyclerAdapter;
+import com.saadm.myanimelist.service.client.MALClient;
 
 import java.util.ArrayList;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainMenuActivity extends AppCompatActivity implements RecyclerAdapter.onStringClickListener {
 
@@ -89,9 +93,8 @@ public class MainMenuActivity extends AppCompatActivity implements RecyclerAdapt
 
     @Override
     public void onItemClick(String item) {
-
-            Intent intent= new Intent(MainMenuActivity.this, AnimeListActivity.class);
-            intent.putExtra("listStatus", item.toLowerCase().replace(" ", "_"));
-            startActivity(intent);
+        Intent intent= new Intent(MainMenuActivity.this, AnimeListActivity.class);
+        intent.putExtra("listStatus", item.toLowerCase().replace(" ", "_"));
+        startActivity(intent);
     }
 }

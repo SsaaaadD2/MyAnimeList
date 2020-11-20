@@ -19,6 +19,7 @@ import com.saadm.myanimelist.service.client.MALClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,6 +39,7 @@ public class AnimeListActivity extends AppCompatActivity implements RecyclerAdap
     String mStatusList;
     ArrayList<AnimeItemCard> mCardList;
     ArrayList<DataItems> mDataItems;
+    boolean mIsRandomAnime = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,13 +115,22 @@ public class AnimeListActivity extends AppCompatActivity implements RecyclerAdap
     }
 
     private void makeWatchListRequest(MALClient client) {
+        if(mStatusList.equals("next_anime")){
+            mStatusList = "plan_to_watch";
+            mIsRandomAnime = true;
+        }
         Call<Data> data = client.getAnimeListData(mAccessToken, mStatusList, "list_updated_at", 100, 0);
         data.enqueue(new Callback<Data>() {
             @Override
             public void onResponse(Call<Data> call, Response<Data> response) {
                 mAnimeData = response.body();
                 mDataItems = (ArrayList<DataItems>) mAnimeData.getDataItems();
-                constructAnimeCards();
+                if(mIsRandomAnime){
+                    getRandomAnime();
+                } else{
+                    constructAnimeCards();
+                }
+
             }
 
             @Override
@@ -127,6 +138,15 @@ public class AnimeListActivity extends AppCompatActivity implements RecyclerAdap
                 Toast.makeText(AnimeListActivity.this, "Could not get list", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void getRandomAnime() {
+        Random rand = new Random();
+        int position = rand.nextInt(mDataItems.size());
+
+        Intent intent = new Intent(this, AnimeDetailsActivity.class);
+        intent.putExtra("Id", mDataItems.get(position).getNode().getId());
+        startActivity(intent);
     }
 
     private void constructAnimeCards() {
