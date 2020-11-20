@@ -4,8 +4,9 @@ import android.graphics.drawable.Drawable;
 
 public class AnimeItemCard {
     private String mTitle;
-//    private String mDescription;
+    private String mDescription;
     private String mGenres;
+    private int id;
     private String mImageUrl;
 
     public AnimeItemCard(String title, /*String description,*/ String genres, String imageUrl){
@@ -23,13 +24,21 @@ public class AnimeItemCard {
         mTitle = title;
     }
 
-//    public String getDescription() {
-//        return mDescription;
-//    }
-//
-//    public void setDescription(String description) {
-//        mDescription = description;
-//    }
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public void setDescription(String description) {
+        mDescription = description;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getGenres() {
         return mGenres;

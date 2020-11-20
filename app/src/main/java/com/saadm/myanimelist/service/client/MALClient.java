@@ -1,6 +1,7 @@
 package com.saadm.myanimelist.service.client;
 
 import com.saadm.myanimelist.model.AccessToken;
+import com.saadm.myanimelist.model.AnimeDetail;
 import com.saadm.myanimelist.model.Data;
 
 import retrofit2.Call;
@@ -10,6 +11,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface MALClient {
@@ -32,5 +34,21 @@ public interface MALClient {
             @Query("sort") String sort,
             @Query("limit") int limit,
             @Query("offset") int offset
+    );
+
+    @GET("anime")
+    Call<Data> getAnimeQueryData(
+            @Header("Authorization") String token,
+            @Query("q") String query,
+            @Query("limit") int limit,
+            @Query("offset") int offset,
+            @Query("fields") String fields
+    );
+
+    @GET("anime/{animeId}")
+    Call<AnimeDetail> getAnimeData(
+            @Header("Authorization") String token,
+            @Path(value="animeId", encoded = true) int animeId,
+            @Query("fields") String fields
     );
 }

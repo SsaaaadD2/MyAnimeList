@@ -89,12 +89,9 @@ public class MainMenuActivity extends AppCompatActivity implements RecyclerAdapt
 
     @Override
     public void onItemClick(String item) {
-        if(item.equals("Search Anime")){
-            return;
-        } else{
+
             Intent intent= new Intent(MainMenuActivity.this, AnimeListActivity.class);
             intent.putExtra("listStatus", item.toLowerCase().replace(" ", "_"));
             startActivity(intent);
-        }
     }
 }

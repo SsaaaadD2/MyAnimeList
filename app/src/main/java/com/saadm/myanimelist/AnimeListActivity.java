@@ -4,9 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.saadm.myanimelist.model.AnimeItemCard;
@@ -27,7 +28,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AnimeListActivity extends AppCompatActivity implements RecyclerAdapter.onCardClickListener {
 
+    //Views
     RecyclerView mRecyclerView;
+    SearchView mSearchView;
+
+    //Global variables
     Data mAnimeData;
     String mAccessToken;
     String mStatusList;
@@ -40,12 +45,13 @@ public class AnimeListActivity extends AppCompatActivity implements RecyclerAdap
         setContentView(R.layout.activity_watch_list);
 
         mRecyclerView = findViewById(R.id.recyclePlanWatchCard);
+        mSearchView = findViewById(R.id.searchWatchList);
+
         mCardList = new ArrayList<AnimeItemCard>();
         SharedPreferences prefs = getSharedPreferences(getString(R.string.PREFS_KEY), MODE_PRIVATE);
         String token = prefs.getString("accessToken", null);
         mAccessToken = "Bearer " + token;
         mStatusList = getIntent().getStringExtra("listStatus");
-        Log.i("Status", mStatusList);
         createMALClient();
     }
 
@@ -57,10 +63,56 @@ public class AnimeListActivity extends AppCompatActivity implements RecyclerAdap
 
         MALClient client = retrofit.create(MALClient.class);
 
-        makeRequest(client);
+        if(mStatusList.equals("search_anime")){
+            makeSearchRequest(client);
+        } else{
+            makeWatchListRequest(client);
+        }
+
     }
 
-    private void makeRequest(MALClient client) {
+    private void makeSearchRequest(MALClient client) {
+
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mCardList.clear();
+                search(client, query.toLowerCase());
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mCardList.clear();
+                if(newText.length() > 3) {
+
+                    search(client, newText.toLowerCase());
+                }
+                return true;
+            }
+        });
+
+    }
+
+    private void search(MALClient client, String query) {
+        String fields = "title,main_picture";
+        Call<Data> data = client.getAnimeQueryData(mAccessToken, query, 10, 0, null);
+        data.enqueue(new Callback<Data>() {
+            @Override
+            public void onResponse(Call<Data> call, Response<Data> response) {
+                mAnimeData = response.body();
+                mDataItems = (ArrayList<DataItems>) mAnimeData.getDataItems();
+                constructAnimeCards();
+            }
+
+            @Override
+            public void onFailure(Call<Data> call, Throwable t) {
+                Toast.makeText(AnimeListActivity.this, "Could not get list", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void makeWatchListRequest(MALClient client) {
         Call<Data> data = client.getAnimeListData(mAccessToken, mStatusList, "list_updated_at", 100, 0);
         data.enqueue(new Callback<Data>() {
             @Override
@@ -98,6 +150,7 @@ public class AnimeListActivity extends AppCompatActivity implements RecyclerAdap
                     allGenres,
                     dataItem.getNode().getMainPicture().getMedium()
             );
+            card.setId(dataItem.getNode().getId());
             mCardList.add(card);
         }
         createRecycleView();
@@ -107,10 +160,31 @@ public class AnimeListActivity extends AppCompatActivity implements RecyclerAdap
         RecyclerAdapter adapter = new RecyclerAdapter(AnimeListActivity.this, mCardList, this);
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        if(!mStatusList.equals("search_anime")){
+            mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    if(query.length() > 3){
+                        adapter.filter(query);
+                    }
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    adapter.filter(newText);
+                    return true;
+                }
+            });
+        }
+
     }
 
     @Override
     public void onItemClick(AnimeItemCard card) {
-
+        Intent intent = new Intent(this, AnimeDetailsActivity.class);
+        intent.putExtra("Id", card.getId());
+        startActivity(intent);
     }
 }

@@ -20,6 +20,10 @@ import java.util.ArrayList;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
     ArrayList<String> mListItems;
     ArrayList<AnimeItemCard> mAnimeItems;
+
+    //Used for filtering and searching
+    ArrayList<AnimeItemCard> mAnimeItemsCopy;
+
     Context mContext;
     onStringClickListener mStringListener;
     onCardClickListener mCardListener;
@@ -42,7 +46,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public RecyclerAdapter(Context ct,ArrayList<AnimeItemCard> animeItems, onCardClickListener itemListener){
         mContext = ct;
         mAnimeItems = animeItems;
-
+        mAnimeItemsCopy = new ArrayList<AnimeItemCard>();
+        mAnimeItemsCopy.addAll(mAnimeItems);
         mCardListener = itemListener;
     }
 
@@ -77,6 +82,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         if(state == 0){
             holder.mItemText.setText(mListItems.get(position));
         } else{
+            holder.mItem = mAnimeItems.get(position);
             holder.mAnimeTitle.setText(mAnimeItems.get(position).getTitle());
             holder.mAnimeGenres.setText(mAnimeItems.get(position).getGenres());
             Picasso.get().load(mAnimeItems.get(position).getImageUrl()).into(holder.mImg);
@@ -87,6 +93,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public int getItemCount() {
         return (mListItems != null ? mListItems.size() : mAnimeItems.size());
+    }
+
+    public void filter(String chars){
+        mAnimeItems.clear();
+        if(chars.isEmpty()){
+            mAnimeItems.addAll(mAnimeItemsCopy);
+        } else{
+            for(AnimeItemCard card: mAnimeItemsCopy){
+                if(card.getTitle().toLowerCase().contains(chars.toLowerCase())){
+                    mAnimeItems.add(card);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 
 
@@ -101,6 +121,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         ImageView mImg;
         TextView mAnimeGenres;
 
+        //To pass in to the clicklistener
+        AnimeItemCard mItem;
+
         onStringClickListener mStringListener;
         onCardClickListener mCardListener;
 
@@ -111,7 +134,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i("Click", "Value of mStringListener " + (mStringListener != null));
                     mStringListener.onItemClick(mItemText.getText().toString());
                 }
             });
@@ -124,6 +146,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             mAnimeGenres = itemView.findViewById(R.id.txt_Genres);
             mImg = itemView.findViewById(R.id.img_AnimeImage);
             mCardListener = myClickListener;
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mCardListener.onItemClick(mItem);
+                }
+            });
             //itemView.setOnClickListener(this);
         }
 
