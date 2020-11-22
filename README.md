@@ -19,6 +19,13 @@ An Android app using the MyAnimeList open API. Created using Android Studio.
 - Destroying/creating activities to prevent accessing login screen if already logged in
 
 ## Demo:
+![Demo Gif 1](app_demo_1.gif)
+
+![Demo Gif 2](app_demo_2.gif)
+
+![Demo Gif 3](app_demo_3.gif)
+
+
 [Check out a demo of the app](https://youtu.be/4b4xoXyjNXk)
 
 ## Download:
